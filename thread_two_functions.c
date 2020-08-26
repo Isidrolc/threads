@@ -7,8 +7,6 @@
 
 void *function1(void *ptr);
 void *function2(void *ptr);
-WINDOW *create_newwin(int height, int width, int starty, int startx);
-void destroy_win(WINDOW *local_win);
 
 int counter1, counter2;
 
@@ -39,48 +37,61 @@ int main()
 
 void *function1(void *ptr)
 {
-        char *message;
+        WINDOW *my_win;
+       	char *message;
+	int startx, starty, width, height;
+	initscr();
         message = (char*)ptr;
-        printf("%s \n", message);
+	startx = 1;
+	starty = 1;
+	height = (LINES / 2) - 2;
+        width  = (COLS / 2) - 2;
+	my_win = newwin(height, width, starty, startx);
+	box(my_win, 0, 0);	
+        mvwprintw(my_win, 3,3, "%s", message);
+	wrefresh(my_win);
+	cbreak();
+	curs_set(0);  // hide the cursor
 	while(counter1 != 0){
-		printf("Counter1 = %d", counter1);
+		mvwprintw(my_win,7,7, "Counter1 = %d", counter1);
+		wrefresh(my_win);
 		counter1 = counter1 - 1;
 		sleep(1);
+                mvwprintw(my_win, 7,7, "Counter1 = %s", "     ");
+                wrefresh(my_win);
+
 	}
+	endwin();
 }
 
 
 void *function2(void *ptr)
 {
-        char *message;
+        WINDOW *my_win2;
+       	char *message;
+	int startx, starty, width, height;
+	initscr();
         message = (char*)ptr;
-        printf("%s \n", message);
+        startx = (COLS / 2) + 2;
+        starty = 1; 
+	height = (LINES / 2) - 2;
+        width  = (COLS / 2) - 2;
+        my_win2 = newwin(height, width, starty, startx);
+        box(my_win2, 0, 0);
+        mvwprintw(my_win2, 3, 3, "%s", message);
+        wrefresh(my_win2);
+        cbreak();
+        curs_set(0);  // hide the cursor
 	while(counter2 != 0){
-		printf("                        Counter2 =                                    %d\n", counter2);
-		counter2 = counter2 - 1;
-		sleep(1);
+                mvwprintw(my_win2,7,7, "Counter2 = %d", counter2);
+                wrefresh(my_win2);
+                counter2 = counter2 - 1;
+                sleep(1);
+                mvwprintw(my_win2, 7,7, "Counter2 = %s", "     ");
+                wrefresh(my_win2);
 	}
+	endwin();
 }
 
 
-WINDOW *create_newwin(int height, int width, int starty, int startx)
-{
-        WINDOW *local_win;
-
-        local_win = newwin(height, width, starty, startx);
-        box(local_win, 0, 0);
-
-        wrefresh(local_win);
-
-        return local_win;
-
-}
-
-void destroy_win(WINDOW *local_win)
-{
-        wborder(local_win, ' ',' ',' ',' ',' ',' ',' ',' ');
-
-        wrefresh(local_win);
-        delwin(local_win);
-}
 
